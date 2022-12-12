@@ -103,6 +103,13 @@ export class LoginComponent implements OnInit {
   }
 
   googleLogin () {
-    this.windowRefService.nativeWindow.location.replace(`${oauthProviderUrl}?client_id=${this.clientId}&response_type=token&scope=email&redirect_uri=${this.redirectUri}`)
+    let state = ""
+    let characters = "ABCDEFGHIJKLMOPQRSTUVXYZabdefghijklmnopqrstuvxyz0123456789"
+    let charactersLength = characters.length
+    for(let i = 0; i < 10; i++) {
+      state += characters.charAt(Math.floor(Math.random() * charactersLength))
+    }
+    localStorage.setItem("state",state)
+    this.windowRefService.nativeWindow.location.replace(`${oauthProviderUrl}?client_id=${this.clientId}&response_type=token&scope=email&redirect_uri=${this.redirectUri}&state=${state}`)
   }
 }

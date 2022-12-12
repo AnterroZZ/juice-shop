@@ -52,7 +52,7 @@ exports.cutOffPoisonNullByte = (str: string) => {
 
 exports.isAuthorized = () => expressJwt({ secret: publicKey })
 exports.denyAll = () => expressJwt({ secret: '' + Math.random() })
-exports.authorize = (user = {}) => jwt.sign(user, privateKey, { expiresInMinutes: 60 * 5, algorithm: 'RS256' })
+exports.authorize = (user = {}) => jwt.sign(user, privateKey, { algorithm: 'RS256' })
 const verify = (token: string) => jws.verify(token, publicKey)
 module.exports.verify = verify
 const decode = (token: string) => { return jws.decode(token).payload }
@@ -204,7 +204,8 @@ exports.appendUserId = () => {
 exports.updateAuthenticatedUsers = () => (req: Request, res: Response, next: NextFunction) => {
   const token = req.cookies.token || utils.jwtFrom(req)
   if (token) {
-    jwt.verify(token, publicKey, (err: Error | null, decoded: any) => {
+    const options = {algorithm: ["RS256"]}
+    jwt.verify(token, publicKey, options, (err: Error | null, decoded: any) => {
       if (err === null) {
         if (authenticatedUsers.get(token) === undefined) {
           authenticatedUsers.put(token, decoded)

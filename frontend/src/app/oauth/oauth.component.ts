@@ -19,6 +19,11 @@ export class OAuthComponent implements OnInit {
   ngOnInit () {
     this.userService.oauthLogin(this.parseRedirectUrlParams().access_token).subscribe((profile: any) => {
       const password = btoa(profile.email.split('').reverse().join(''))
+      const urlState = this.parseRedirectUrlParams().state
+      const savedState = localStorage.getItem("state")
+      if(urlState != savedState) {
+        throw Error
+      }
       this.userService.save({ email: profile.email, password: password, passwordRepeat: password }).subscribe(() => {
         this.login(profile)
       }, () => this.login(profile))
